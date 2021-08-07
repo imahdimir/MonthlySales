@@ -5,8 +5,8 @@ import numpy as np
 from multiprocessing import cpu_count
 from multiprocess import Pool
 import re
-import z_namespaces as ns
-import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py import z_classesFunctions as cf
 from io import StringIO
 
 parser = etree.HTMLParser()
@@ -57,7 +57,7 @@ class FirmsMonthlySale:
 
     def __init__(self, tracingno, jdate):
 
-        self.htmlpn = dirs.htmls / f'{tracingno}.html'
+        self.htmlpn = dirs.htmls / f'{tracingno}{ns.html_suf}'
 
         with open(self.htmlpn, 'r') as f:
             self.raw_html = f.read()
@@ -408,7 +408,7 @@ def main():
     ##
     df[rd.TracingNo] = df[rd.TracingNo].astype(int)
     df[rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}.html").exists())
+            dirs.htmls / f"{x}{ns.html_suf}").exists())
     ##
     cond = df[rd.htmlDownloaded].eq(True)
     print(cond[cond])
@@ -490,3 +490,6 @@ def main():
 if __name__ == '__main__':
     main()
     print(f'{script_name}.py Done!')
+else:
+    pass
+    ##

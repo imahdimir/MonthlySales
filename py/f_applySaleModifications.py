@@ -1,7 +1,7 @@
 ##
 import pandas as pd
-import z_namespaces as ns
-import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py import z_classesFunctions as cf
 
 lst_script = 'e'
 script_name = 'f'
@@ -44,18 +44,14 @@ def main():
         df2[col] = df2[col].apply(lambda x: str(x).split('.')[0])
         df2[col] = df2[col].apply(lambda x: None if x == 'nan' else x)
     ##
-    df2['ModificationCh'] = df2[rd.revUntilLastMonth].fillna(0).astype(int) + \
-                            df2[rd.modification].fillna(0).astype(int) == df2[
-                                rd.revUntilLastMonthModified].fillna(0).astype(
-            int)
-    df2['ModificationCh'] |= df2[rd.revUntilLastMonth].fillna(0).astype(int) + \
-                             df2[rd.modification].fillna(0).astype(int) == df2[
-                                 rd.revUntilLastMonthModified].fillna(0).astype(
-            int) + 1
-    df2['ModificationCh'] |= df2[rd.revUntilLastMonth].fillna(0).astype(int) + \
-                             df2[rd.modification].fillna(0).astype(int) == df2[
-                                 rd.revUntilLastMonthModified].fillna(0).astype(
-            int) - 1
+    for el in [0, 1, -1]:
+        df2['ModificationCh'] = df2[
+                                    rd.revUntilLastMonth].fillna(0).astype(int) + \
+                                df2[rd.modification].fillna(0).astype(int) == \
+                                df2[
+                                    rd.revUntilLastMonthModified].fillna(0).astype(
+                                        int) + el
+
     ch1 = df2['ModificationCh'].eq(False)
     ch1df = df2[ch1]
     print(ch1df)
@@ -158,3 +154,6 @@ def main():
 if __name__ == "__main__":
     main()
     print(f"{script_name}.py done!")
+else:
+    pass
+    ##

@@ -3,8 +3,8 @@ import pandas as pd
 from scipy import stats
 import numpy as np
 from persiantools.jdatetime import JalaliDate
-import z_namespaces as ns
-import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py import z_classesFunctions as cf
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -92,3 +92,6 @@ def main():
 if __name__ == '__main__':
     main()
     print(f"{script_name}.py done!")
+else:
+    pass
+    ##
