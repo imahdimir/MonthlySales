@@ -5,21 +5,18 @@ CWD = Path.cwd()
 
 # % Constants %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parquet_suf = ".parquet"
+html_suf = '.html'
 ul = '_'  # under line
 
 class ProjectDirectories:
     def __init__(self):
-        proj_main_dir_helper = CWD.parent
-
         self.htmls = None
         self.jsons = None
         self.outputs = None
         self.raw = None
 
         for attr_key in self.__dict__:
-            self.__dict__[attr_key] = proj_main_dir_helper / attr_key
-
-        self.proj_main_dir = proj_main_dir_helper
+            self.__dict__[attr_key] = CWD / attr_key
 
 class ReqParams:
     def __init__(self):
@@ -42,6 +39,8 @@ class ReqParams:
                 "Publisher"        : "false",
                 "TracingNo"        : "-1",
                 "search"           : "false", }
+        self.CodalBaseUrl = "https://codal.ir"
+        self.LetterCodeForMonthlySaleReorts = "ن-۳۰"
 
 class CodalTableColumns:
     def __init__(self):

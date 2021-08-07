@@ -1,11 +1,12 @@
 ##
+# % # Use vpn for the first time to let the requests_html pkg to download chromium if it is not installed.
 import asyncio
 import nest_asyncio
 import glob
 import os
 import pandas as pd
-import z_namespaces as ns
-import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py import z_classesFunctions as cf
 # from aiohttp import ClientSession
 # from requests_html import HTML
 # from requests_html import HTMLSession
@@ -81,7 +82,7 @@ def main():
     df = pd.read_parquet(pre_prq_pn)
     print(df)
     ##
-    cond = df[rd.LetterCode].eq("ن-۳۰")
+    cond = df[rd.LetterCode].eq(ns.ReqParams().LetterCodeForMonthlySaleReorts)
     print(cond[cond])
     ##
     df[rd.jDate] = df[rd.Title].apply(cf.find_jdate)
@@ -89,15 +90,19 @@ def main():
     cond &= df[rd.HasHtml]
     print(cond[cond])
     ##
-    df.loc[cond, rd.fullUrl] = "https://codal.ir" + df[rd.Url]
+    df.loc[cond, rd.fullUrl] = ns.ReqParams().CodalBaseUrl + df[rd.Url]
     ##
     df.loc[cond, rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}.html").exists())
+            dirs.htmls / f"{x}{ns.html_suf}").exists())
     ##
     cond &= df[rd.htmlDownloaded].eq(False)
     print(cond[cond])
     ##
     filtered_df = df[cond]
+    # test1_url = filtered_df.iloc[0][rd.fullUrl]
+    # test1_fpn = dirs.htmls / f'{filtered_df.iloc[0][rd.TracingNo]}{ns.html_suf}'
+    # asyncio.run(pages_reading_main([test1_url], [test1_fpn]))
+    ##
     clusters = cf.return_clusters_indices(filtered_df, 10)
     ##
     for i in range(len(clusters) - 1):
@@ -108,12 +113,13 @@ def main():
         urls = filtered_df.iloc[start_index: end_index][rd.fullUrl]
         htmlfpns = str(dirs.htmls) + '/' + \
                    filtered_df.iloc[start_index: end_index][
-                       rd.TracingNo].astype(str) + '.html'
+                       rd.TracingNo].astype(str) + ns.html_suf
 
-        asyncio.run(pages_reading_main(urls, htmlfpns))  # break
+        asyncio.run(pages_reading_main(urls, htmlfpns))
+        # break
     ##
     # remove timeout and corrupt htmls and download them again
-    htmlpns = glob.glob(str(dirs.htmls / '*.html'))
+    htmlpns = glob.glob(str(dirs.htmls / f'*{ns.html_suf}'))
     print(len(htmlpns))
     ##
     timeout_error = '"error": 504, "type": "GlobalTimeoutError"'
@@ -134,7 +140,7 @@ def main():
                 print(htpn)
     ##
     df.loc[cond, rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}.html").exists())
+            dirs.htmls / f"{x}{ns.html_suf}").exists())
     ##
     df.to_parquet(cur_prq_pn, index = False)
 
@@ -142,3 +148,6 @@ def main():
 if __name__ == "__main__":
     main()
     print(f'{script_name}.py Done!')
+else:
+    pass
+    ##

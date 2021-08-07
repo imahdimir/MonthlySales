@@ -4,8 +4,8 @@ import json
 import os
 
 import pandas as pd
-import z_namespaces as ns
-import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py import z_classesFunctions as cf
 
 lst_script_name = 'b'
 script_name = 'c'
@@ -76,3 +76,9 @@ def main():
 if __name__ == '__main__':
     main()
     print(f'{script_name}.py done!')
+else:
+    pass
+    ##
+    df = pd.read_parquet(cur_scrp_prq_pn)
+
+##
