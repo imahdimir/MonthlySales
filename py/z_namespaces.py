@@ -92,6 +92,10 @@ class RawDataColumns(CodalTableColumns):
         self.revUntilCurrnetMonth = None
         self.succeed = None
         self.jMonth = None
+        self.modificationCheck = None
+        self.untilCurMonthCheck = None
+        self.modificationFromNextMonth = None
+        self.modifiedMonthRevenue = None
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = attr_key

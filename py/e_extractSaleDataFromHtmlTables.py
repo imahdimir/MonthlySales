@@ -3,7 +3,8 @@ import pandas as pd
 from lxml import etree
 import numpy as np
 from multiprocessing import cpu_count
-from multiprocess import Pool
+from multiprocessing import Pool
+# from multiprocess import Pool
 import re
 from py import z_namespaces as ns
 from py import z_classesFunctions as cf

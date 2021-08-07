@@ -4,7 +4,6 @@ from scipy import stats
 import numpy as np
 from persiantools.jdatetime import JalaliDate
 from py import z_namespaces as ns
-from py import z_classesFunctions as cf
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -27,7 +26,7 @@ def main():
     ##
     for col in [rd.revUntilLastMonth, rd.modification,
                 rd.revUntilLastMonthModified, rd.revenue,
-                rd.revUntilCurrnetMonth, 'ModifiedMonthlyRev']:
+                rd.revUntilCurrnetMonth, rd.modifiedMonthRevenue]:
         df = df.rename(columns = {col: col + '_MR'})
     ##
     jtoday = JalaliDate.today()
@@ -43,35 +42,36 @@ def main():
                   index = False)
     ##
     month_sale = df[[rd.firmType, rd.Symbol, rd.jMonth, rd.PublishDateTime,
-                     'ModifiedMonthlyRev_MR']]
+                     rd.modifiedMonthRevenue + '_MR']]
     print(month_sale)
     ##
-    month_sale['ModifiedRev_BT'] = month_sale['ModifiedMonthlyRev_MR'].astype(
+    month_sale[rd.modifiedMonthRevenue + '_BT'] = month_sale[
+                                                      rd.modifiedMonthRevenue + '_MR'].astype(
             int) / (10 * 10 ** 3)
     ##
-    month_sale = month_sale.drop(columns = 'ModifiedMonthlyRev_MR')
+    month_sale = month_sale.drop(columns = rd.modifiedMonthRevenue + '_MR')
     ##
-    month_sale.loc[month_sale['ModifiedRev_BT'].between(-0.001,
-                                                        0.001), 'ModifiedRev_BT'] = 0
+    month_sale.loc[month_sale[rd.modifiedMonthRevenue + '_BT'].between(-0.001,
+                                                                       0.001), rd.modifiedMonthRevenue + '_BT'] = 0
     ##
-    month_sale = month_sale[month_sale['ModifiedRev_BT'].ne(0)]
+    month_sale = month_sale[month_sale[rd.modifiedMonthRevenue + '_BT'].ne(0)]
     print(month_sale)
     ##
     month_sale2 = month_sale[
         month_sale[rd.firmType].isin([ft.Production, ft.Service])]
     print(month_sale2)
     ##
-    z_scores = stats.zscore(month_sale2['ModifiedRev_BT'])
+    z_scores = stats.zscore(month_sale2[rd.modifiedMonthRevenue + '_BT'])
     abs_z_scores = np.abs(z_scores)
     filter_outliers = abs_z_scores < 3
     month_sale2 = month_sale2[filter_outliers]
     print(month_sale2)
     ##
-    df2 = month_sale2[month_sale2['ModifiedRev_BT'].lt(0)]
+    df2 = month_sale2[month_sale2[rd.modifiedMonthRevenue + '_BT'].lt(0)]
     print(df2)
     ##
     month_sale2 = month_sale2[
-        [rd.firmType, rd.Symbol, rd.jMonth, 'ModifiedRev_BT']]
+        [rd.firmType, rd.Symbol, rd.jMonth, rd.modifiedMonthRevenue + '_BT']]
     ##
     month_sale2.to_parquet(cur_prq, index = False)
     ##
