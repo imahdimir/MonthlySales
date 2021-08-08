@@ -1,6 +1,7 @@
 ##
 from pathlib import Path
 
+
 CWD = Path.cwd()
 
 # % Constants %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,3 +139,21 @@ class ErrorMessages:
         self.noModificationSaleIntersect = None
         self.notCurrentPeriod = None
         self.ValueError = None
+
+        for attr_key in self.__dict__:
+            self.__dict__[attr_key] = attr_key
+
+class OutputColumns(RawDataColumns):
+    def __init__(self):
+        super().__init__()
+
+        self.revUntilLastMonth_MR = None
+        self.modification_MR = None
+        self.revUntilLastMonthModified_MR = None
+        self.revenue_MR = None
+        self.revUntilCurrnetMonth_MR = None
+        self.modifiedMonthRevenue_MR = None
+        self.modifiedMonthRevenue_BT = None
+
+        for attr_key in self.__dict__:
+            self.__dict__[attr_key] = attr_key

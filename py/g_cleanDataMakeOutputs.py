@@ -6,6 +6,7 @@ from persiantools.jdatetime import JalaliDate
 from py import z_namespaces as ns
 import warnings
 
+
 warnings.filterwarnings("ignore")
 
 lst_script_name = 'f'
@@ -13,6 +14,7 @@ script_name = 'g'
 
 dirs = ns.ProjectDirectories()
 rd = ns.RawDataColumns()
+oc = ns.OutputColumns()
 ft = ns.FirmTypes()
 
 cur_prq = dirs.raw / f"{script_name}{ns.parquet_suf}"
@@ -24,10 +26,14 @@ def main():
     df = pd.read_parquet(pre_prq)
     print(df)
     ##
-    for col in [rd.revUntilLastMonth, rd.modification,
-                rd.revUntilLastMonthModified, rd.revenue,
-                rd.revUntilCurrnetMonth, rd.modifiedMonthRevenue]:
-        df = df.rename(columns = {col: col + '_MR'})
+    ren = {rd.revUntilLastMonth        : oc.revUntilLastMonth_MR,
+           rd.modification             : oc.modification_MR,
+           rd.revUntilLastMonthModified: oc.revUntilLastMonthModified_MR,
+           rd.revenue                  : oc.revenue_MR,
+           rd.revUntilCurrnetMonth     : oc.revUntilCurrnetMonth_MR,
+           rd.modifiedMonthRevenue     : oc.modifiedMonthRevenue_MR}
+
+    df = df.rename(columns = ren)
     ##
     jtoday = JalaliDate.today()
     jyearnow = str(jtoday.year)
@@ -42,36 +48,36 @@ def main():
                   index = False)
     ##
     month_sale = df[[rd.firmType, rd.Symbol, rd.jMonth, rd.PublishDateTime,
-                     rd.modifiedMonthRevenue + '_MR']]
+                     oc.modifiedMonthRevenue_MR]]
     print(month_sale)
     ##
-    month_sale[rd.modifiedMonthRevenue + '_BT'] = month_sale[
-                                                      rd.modifiedMonthRevenue + '_MR'].astype(
+    month_sale[oc.modifiedMonthRevenue_BT] = month_sale[
+                                                 oc.modifiedMonthRevenue_MR].astype(
             int) / (10 * 10 ** 3)
     ##
-    month_sale = month_sale.drop(columns = rd.modifiedMonthRevenue + '_MR')
+    month_sale = month_sale.drop(columns = oc.modifiedMonthRevenue_MR)
     ##
-    month_sale.loc[month_sale[rd.modifiedMonthRevenue + '_BT'].between(-0.001,
-                                                                       0.001), rd.modifiedMonthRevenue + '_BT'] = 0
+    month_sale.loc[month_sale[oc.modifiedMonthRevenue_BT].between(-0.001,
+                                                                  0.001), oc.modifiedMonthRevenue_BT] = 0
     ##
-    month_sale = month_sale[month_sale[rd.modifiedMonthRevenue + '_BT'].ne(0)]
+    month_sale = month_sale[month_sale[oc.modifiedMonthRevenue_BT].ne(0)]
     print(month_sale)
     ##
     month_sale2 = month_sale[
         month_sale[rd.firmType].isin([ft.Production, ft.Service])]
     print(month_sale2)
     ##
-    z_scores = stats.zscore(month_sale2[rd.modifiedMonthRevenue + '_BT'])
+    z_scores = stats.zscore(month_sale2[oc.modifiedMonthRevenue_BT])
     abs_z_scores = np.abs(z_scores)
     filter_outliers = abs_z_scores < 3
     month_sale2 = month_sale2[filter_outliers]
     print(month_sale2)
     ##
-    df2 = month_sale2[month_sale2[rd.modifiedMonthRevenue + '_BT'].lt(0)]
+    df2 = month_sale2[month_sale2[oc.modifiedMonthRevenue_BT].lt(0)]
     print(df2)
     ##
     month_sale2 = month_sale2[
-        [rd.firmType, rd.Symbol, rd.jMonth, rd.modifiedMonthRevenue + '_BT']]
+        [rd.firmType, rd.Symbol, rd.jMonth, oc.modifiedMonthRevenue_BT]]
     ##
     month_sale2.to_parquet(cur_prq, index = False)
     ##
@@ -88,7 +94,8 @@ def main():
     month_sale2.to_parquet(dirs.outputs / f"{final_data_n}{ns.parquet_suf}",
                            index = False)
 
-##
+    ##
+
 if __name__ == '__main__':
     main()
     print(f"{script_name}.py done!")
