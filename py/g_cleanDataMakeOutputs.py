@@ -3,9 +3,15 @@ import pandas as pd
 from scipy import stats
 import numpy as np
 from persiantools.jdatetime import JalaliDate
-from py import z_namespaces as ns
 import warnings
 
+
+try:
+    from py import z_ns as ns
+    from py import z_cf as cf
+except ModuleNotFoundError:
+    import z_ns as ns
+    import z_cf as cf
 
 warnings.filterwarnings("ignore")
 
@@ -16,6 +22,7 @@ dirs = ns.ProjectDirectories()
 rd = ns.RawDataColumns()
 oc = ns.OutputColumns()
 ft = ns.FirmTypes()
+fc = ns.FormalCols()
 
 cur_prq = dirs.raw / f"{script_name}{ns.parquet_suf}"
 pre_prq = dirs.raw / f"{lst_script_name}{ns.parquet_suf}"
@@ -39,13 +46,13 @@ def main():
     jyearnow = str(jtoday.year)
     jmonthnow = str(jtoday.month)
     jdaynow = str(jtoday.day) if jtoday.day > 9 else f'0{jtoday.day}'
-    full_data_n = 'MonthlySale-FullData-' + jyearnow + jmonthnow + jdaynow
+    # full_data_n = 'MonthlySale-FullData-' + jyearnow + jmonthnow + jdaynow
 
-    print(full_data_n)
-
-    df.to_excel(dirs.outputs / f"{full_data_n}.xlsx", index = False)
-    df.to_parquet(dirs.outputs / f"{full_data_n}{ns.parquet_suf}",
-                  index = False)
+    # print(full_data_n)
+    #
+    # # df.to_excel(dirs.output / f"{full_data_n}.xlsx", index = False)
+    # df.to_parquet(dirs.output / f"{full_data_n}{ns.parquet_suf}",
+    #               index = False)
     ##
     month_sale = df[[rd.firmType, rd.Symbol, rd.jMonth, rd.PublishDateTime,
                      oc.modifiedMonthRevenue_MR]]
@@ -81,21 +88,20 @@ def main():
     ##
     month_sale2.to_parquet(cur_prq, index = False)
     ##
-    final_data_n = 'MonthlySale-' + jyearnow + jmonthnow + jdaynow
+    final_data_n = 'TSE Monthly Sale-Updated ' + jyearnow + jmonthnow + jdaynow
     print(final_data_n)
-    ##
-    # for col in month_sale2.columns:
-    #     month_sale2[col] = month_sale2[col].astype(str)
     ##
     month_sale2 = month_sale2.convert_dtypes()
     ##
-    month_sale2.to_excel(dirs.outputs / f"{final_data_n}.xlsx", index = False)
-
-    month_sale2.to_parquet(dirs.outputs / f"{final_data_n}{ns.parquet_suf}",
-                           index = False)
-
+    formal_cols = {oc.firmType               : fc.FirmType,
+                   oc.Symbol                 : fc.Ticker,
+                   oc.jMonth                 : fc.JMonth,
+                   oc.modifiedMonthRevenue_BT: fc.RevenueBT}
+    formal_data = month_sale2.rename(columns = formal_cols)
     ##
+    cf.save_df_to_xl(formal_data, dirs.output / final_data_n)
 
+##
 if __name__ == '__main__':
     main()
     print(f"{script_name}.py done!")

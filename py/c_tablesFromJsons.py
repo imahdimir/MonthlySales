@@ -4,8 +4,14 @@ import json
 import os
 
 import pandas as pd
-from py import z_namespaces as ns
-from py import z_classesFunctions as cf
+
+
+try:
+    from py import z_ns as ns
+    from py import z_cf as cf
+except ModuleNotFoundError:
+    import z_ns as ns
+    import z_cf as cf
 
 lst_script_name = 'b'
 script_name = 'c'

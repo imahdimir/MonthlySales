@@ -1,18 +1,26 @@
+"""Use vpn for the first time to let the requests_html pkg to download chromium if it is not installed."""
+
 ##
-# % # Use vpn for the first time to let the requests_html pkg to download chromium if it is not installed.
 import asyncio
 import nest_asyncio
 import glob
 import os
 import pandas as pd
-from py import z_namespaces as ns
-from py import z_classesFunctions as cf
+
 # from aiohttp import ClientSession
 # from requests_html import HTML
 # from requests_html import HTMLSession
 from requests_html import AsyncHTMLSession
 import warnings
 from lxml.etree import XMLSyntaxError
+
+
+try:
+    from py import z_ns as ns
+    from py import z_cf as cf
+except ModuleNotFoundError:
+    import z_ns as ns
+    import z_cf as cf
 
 warnings.filterwarnings("ignore")
 nest_asyncio.apply()  # Run this line in cell mode to code work

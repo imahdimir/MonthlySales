@@ -1,3 +1,5 @@
+"""doc."""
+
 ##
 import pandas as pd
 from lxml import etree
@@ -6,9 +8,15 @@ from multiprocessing import cpu_count
 from multiprocessing import Pool
 # from multiprocess import Pool
 import re
-from py import z_namespaces as ns
-from py import z_classesFunctions as cf
 from io import StringIO
+
+
+try:
+    from py import z_ns as ns
+    from py import z_cf as cf
+except ModuleNotFoundError:
+    import z_ns as ns
+    import z_cf as cf
 
 parser = etree.HTMLParser()
 
@@ -364,6 +372,7 @@ class FirmsMonthlySale:
         elif self.output[rd.firmType] == ft.Service:
             self.service()
 
+        self.output[rd.succeed] = False
         if re.fullmatch(r"-?\d+\.\d*", str(self.output[rd.revenue])):
             self.output[rd.succeed] = True
 
@@ -417,12 +426,6 @@ def main():
     cond &= df[rd.succeed].ne('True')
     print(cond[cond])
     ##
-    # cond &= ~ df['FirmType'].astype(str).isin([m.firmtypes['b'],
-    #                                            m.firmtypes['i'],
-    #                                            m.firmtypes['r'],
-    #                                            m.firmtypes['l']])
-    # print(cond[cond])
-    ##
     cond &= df[rd.isBlank].ne('True')
     print(cond[cond])
     ##
@@ -448,7 +451,6 @@ def main():
 
         for j, out_el in enumerate(outputs):
             df.loc[corr_is, out_el] = [w[j] for w in out]
-
         # break
     ##
     for col in df.columns:

@@ -4,8 +4,14 @@ import json
 import nest_asyncio
 from aiohttp import ClientSession
 import requests
-from py import z_namespaces as ns
-from py import z_classesFunctions as cf
+
+
+try:
+    from py import z_ns as ns
+    from py import z_cf as cf
+except ModuleNotFoundError:
+    import z_ns as ns
+    import z_cf as cf
 
 nest_asyncio.apply()  # Run this line in cell mode to code work
 
