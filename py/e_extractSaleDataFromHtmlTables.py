@@ -398,6 +398,7 @@ def target(tracingno, jdate):
     except ValueError as e:
         # noinspection PyTypeChecker
         out1[rd.errMsg] = em.ValueError
+        out1[rd.succeed] = False
         print(tracingno)
         print(e)
         return list(out1.values())

@@ -136,18 +136,21 @@ def save_df_to_xl(df: pd.DataFrame,
                   pn_suff_less: pathlib.Path,
                   index: bool = False,
                   header: bool = True,
-                  max_col_length: int = 40):
-    wb = pyxl.Workbook()
+                  max_col_length: int = 40,
+                  float_format=None):
+    df.to_excel(pn_suff_less.resolve().with_suffix(".xlsx"),
+                header = header,
+                index = index,
+                float_format = float_format)
+    wb = pyxl.load_workbook(filename = pn_suff_less.resolve().with_suffix(
+            ".xlsx"))
     ws = wb.active
-    df = df.fillna(value = '')
-    for r in dataframe_to_rows(df, index = index, header = header):
-        ws.append(r)
     panes = index * ws['A'] + header * ws[1]
     for cell in panes:
         cell.style = 'Pandas'
     for column in ws.columns:
         length = max(len(str(cell.value)) for cell in column)
-        length = length if length <= max_col_length else max_col_length
+        length = length + 2 if length + 2 <= max_col_length else max_col_length
         ws.column_dimensions[column[0].column_letter].width = length
     wb.save(pn_suff_less.resolve().with_suffix(".xlsx"))
     wb.close()

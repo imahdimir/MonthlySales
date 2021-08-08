@@ -99,7 +99,9 @@ def main():
                    oc.modifiedMonthRevenue_BT: fc.RevenueBT}
     formal_data = month_sale2.rename(columns = formal_cols)
     ##
-    cf.save_df_to_xl(formal_data, dirs.output / final_data_n)
+    cf.save_df_to_xl(formal_data,
+                     dirs.output / final_data_n,
+                     float_format = "%.3f")
 
 ##
 if __name__ == '__main__':
