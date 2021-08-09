@@ -23,6 +23,7 @@ rd = ns.RawDataColumns()
 oc = ns.OutputColumns()
 ft = ns.FirmTypes()
 fc = ns.FormalCols()
+imf = ns.ImportantFiles()
 
 cur_prq = dirs.raw / f"{script_name}{ns.parquet_suf}"
 pre_prq = dirs.raw / f"{lst_script_name}{ns.parquet_suf}"
@@ -42,17 +43,14 @@ def main():
 
     df = df.rename(columns = ren)
     ##
-    jtoday = JalaliDate.today()
-    jyearnow = str(jtoday.year)
-    jmonthnow = str(jtoday.month)
-    jdaynow = str(jtoday.day) if jtoday.day > 9 else f'0{jtoday.day}'
-    # full_data_n = 'MonthlySale-FullData-' + jyearnow + jmonthnow + jdaynow
-
-    # print(full_data_n)
-    #
-    # # df.to_excel(dirs.output / f"{full_data_n}.xlsx", index = False)
-    # df.to_parquet(dirs.output / f"{full_data_n}{ns.parquet_suf}",
-    #               index = False)
+    jd = JalaliDate.today()
+    jyr = str(jd.year)
+    jm = str(jd.month) if jd.month > 9 else f'0{jd.month}'
+    jdy = str(jd.day) if jd.day > 9 else f'0{jd.day}'
+    final_data_n = 'TSE Monthly Sale-Updated-' + jyr + jm + jdy
+    with open(imf.lastData, 'w') as f:
+        f.write(f'{final_data_n}.xlsx')
+        print(final_data_n)
     ##
     month_sale = df[[rd.firmType, rd.Symbol, rd.jMonth, rd.PublishDateTime,
                      oc.modifiedMonthRevenue_MR]]
@@ -87,9 +85,6 @@ def main():
         [rd.firmType, rd.Symbol, rd.jMonth, oc.modifiedMonthRevenue_BT]]
     ##
     month_sale2.to_parquet(cur_prq, index = False)
-    ##
-    final_data_n = 'TSE Monthly Sale-Updated ' + jyearnow + jmonthnow + jdaynow
-    print(final_data_n)
     ##
     month_sale2 = month_sale2.convert_dtypes()
     ##

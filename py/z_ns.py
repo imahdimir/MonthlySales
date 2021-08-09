@@ -1,8 +1,11 @@
 ##
 from pathlib import Path
+from varname import nameof
 
 
 CWD = Path.cwd()
+ReportMaker = None
+ReportMaker = CWD / nameof(ReportMaker)
 
 # % Constants %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 parquet_suf = ".parquet"
@@ -15,6 +18,7 @@ class ProjectDirectories:
         self.jsons = None
         self.output = None
         self.raw = None
+        self.py = None
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = CWD / attr_key
@@ -154,3 +158,27 @@ class FormalCols(OutputColumns):
         self.JMonth = 'JMonth'
         self.Ticker = 'Ticker'
         self.RevenueBT = 'Revenue(BT)'
+
+class MandatoryDirsFiles:
+    def __init__(self):
+        pdirs = ProjectDirectories()
+        self.raw = pdirs.raw
+        self.py = pdirs.py
+        print(self.__dict__)
+
+class ImportantFiles(ProjectDirectories):
+    def __init__(self):
+        super().__init__()
+
+        self.lastData = None
+        self.lastData = self.raw / f'{nameof(self.lastData)}.txt'
+
+##
+if __name__ == '__main__':
+    pass
+else:
+    pass
+    ##
+    mdd = MandatoryDirsFiles()
+
+##
