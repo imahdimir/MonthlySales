@@ -114,7 +114,7 @@ def any_of_list_isin(srchlist: list, inp):
     return False
 
 def find_all_locs_eq_val(dfobj: pd.DataFrame, value):
-    return dfobj[dfobj.eq(value)].stack().index.values.tolist()
+    return dfobj[dfobj.eq(value)].stack().index_lbl.values.tolist()
 
 def read_accvalue_from_str(string):
     string1 = str(string)

@@ -3,7 +3,17 @@
 import os
 import shutil
 import pandas as pd
+from py import z_ns as ns
+from ReportMaker.py import r_a_main as rm
+from ReportMaker.py import r_z_ns as rns
+from py import z_cf as cf
 
+
+dirs = ns.ProjectDirectories()
+imf = ns.ImportantFiles()
+
+rdfn = rns.DataFilesNames()
+rdirs = rns.FormalReportDirectories()
 
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
@@ -31,3 +41,20 @@ def make_balanced_subsample(df: pd.DataFrame,
 
     bs = df[df[y].isin(common_y)]
     return bs
+
+def load_whole_sample():
+    """return latest whole sample"""
+
+    with open(imf.lastData, 'r') as f:
+        xln = f.read()
+
+    xl_pn = dirs.output / xln
+    df = pd.read_excel(xl_pn, engine = 'openpyxl')
+    return df
+
+def load_balanced_subsample():
+    """sth"""
+    bs_n_pn = rdirs.data / f'{rdfn.bs_name_txt}.txt'
+    with open(bs_n_pn, 'r') as f:
+        bs_pn = f.read()
+    return pd.read_excel(bs_pn, engine = 'openpyxl')
