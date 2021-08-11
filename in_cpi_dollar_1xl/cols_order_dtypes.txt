@@ -1,0 +1,4 @@
+cols order (col names don't matter):
+jmonth / dollar / cpi
+dtypes:
+int(like 139601) / int-dollar to *Toman* / float(CB CPI)
