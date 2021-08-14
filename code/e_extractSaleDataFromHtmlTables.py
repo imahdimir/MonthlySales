@@ -25,8 +25,8 @@ ft = ns.FirmTypes()
 em = ns.ErrorMessages()
 cte = ns.Constants()
 
-cur_prq = dirs.raw / f"{script_name}{cte.parquet_suf}"
-pre_prq = dirs.raw / f"{lst_script_name}{cte.parquet_suf}"
+cur_prq = dirs.raw / f"{script_name}.parquet"
+pre_prq = dirs.raw / f"{lst_script_name}.parquet"
 
 current_period = ['دوره یک ماهه منتهی به']
 sale_mil_rial = ['مبلغ فروش']
@@ -64,7 +64,7 @@ class FirmsMonthlySale:
 
     def __init__(self, tracingno, jdate):
 
-        self.htmlpn = dirs.htmls / f'{tracingno}{cte.html_suf}'
+        self.htmlpn = dirs.htmls / f'{tracingno}.html'
 
         with open(self.htmlpn, 'r') as f:
             self.raw_html = f.read()
@@ -444,7 +444,7 @@ def main():
     ##
     df[rd.TracingNo] = df[rd.TracingNo].astype(int)
     df[rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}{cte.html_suf}").exists())
+            dirs.htmls / f"{x}.html").exists())
     ##
     cond = df[rd.htmlDownloaded].eq(True)
     print(cond[cond])

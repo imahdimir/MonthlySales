@@ -31,8 +31,8 @@ dirs = ns.Dirs()
 rd = ns.RawDataColumns()
 cte = ns.Constants()
 
-cur_prq_pn = dirs.raw / f'{script_name}{cte.parquet_suf}'
-pre_prq_pn = dirs.raw / f'{lst_script_name}{cte.parquet_suf}'
+cur_prq_pn = dirs.raw / f'{script_name}.parquet'
+pre_prq_pn = dirs.raw / f'{lst_script_name}.parquet'
 
 
 # async def download_js_htmls(url):
@@ -103,7 +103,7 @@ def main():
     df.loc[cond, rd.fullUrl] = ns.ReqParams().CodalBaseUrl + df[rd.Url]
     ##
     df.loc[cond, rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}{cte.html_suf}").exists())
+            dirs.htmls / f"{x}.html").exists())
     ##
     cond &= df[rd.htmlDownloaded].eq(False)
     print(cond[cond])
@@ -123,13 +123,13 @@ def main():
         urls = filtered_df.iloc[start_index: end_index][rd.fullUrl]
         htmlfpns = str(dirs.htmls) + '/' + \
                    filtered_df.iloc[start_index: end_index][
-                       rd.TracingNo].astype(str) + cte.html_suf
+                       rd.TracingNo].astype(str) + ".html"
 
         asyncio.run(pages_reading_main(urls, htmlfpns))
         # break
     ##
     # remove timeout and corrupt htmls and download them again
-    htmlpns = glob.glob(str(dirs.htmls / f'*{cte.html_suf}'))
+    htmlpns = glob.glob(str(dirs.htmls / f'*.html'))
     print(len(htmlpns))
     ##
     timeout_error = '"error": 504, "type": "GlobalTimeoutError"'
@@ -150,7 +150,7 @@ def main():
                 print(htpn)
     ##
     df.loc[cond, rd.htmlDownloaded] = df[rd.TracingNo].apply(lambda x: (
-            dirs.htmls / f"{x}{cte.html_suf}").exists())
+            dirs.htmls / f"{x}.html").exists())
     ##
     df.to_parquet(cur_prq_pn, index=False)
 

@@ -92,11 +92,11 @@ class DataDsc:
 
 def make_the_balanced_subsample_save():
     whs = cf.load_whole_sample()
-    whs = whs[whs[fc.JMonth].ge(pa.initial_jmoneh)]
+    whs = whs[whs[fc.JMonth].ge(pa.initial_jmonth)]
     if pa.last_jmonth is not None:
         whs = whs[whs[fc.JMonth].le(pa.last_jmonth)]
     bsu = cf.make_balanced_subsample(whs, fc.JMonth, fc.Ticker)
-    init_jm = pa.initial_jmoneh
+    init_jm = pa.initial_jmonth
     lst_jm = whs[fc.JMonth].max()
     bs_lbl = ds.balanced_subsample
     bsu_pn = dirs.out_data / f'{bs_lbl}-{init_jm}-{lst_jm}.xlsx'

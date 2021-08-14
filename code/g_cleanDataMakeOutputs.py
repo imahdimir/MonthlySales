@@ -22,8 +22,8 @@ fc = ns.FormalCols()
 imf = ns.VeryImportantFiles()
 cte = ns.Constants()
 
-cur_prq = dirs.raw / f"{script_name}{cte.parquet_suf}"
-pre_prq = dirs.raw / f"{lst_script_name}{cte.parquet_suf}"
+cur_prq = dirs.raw / f"{script_name}.parquet"
+pre_prq = dirs.raw / f"{lst_script_name}.parquet"
 
 
 def main():

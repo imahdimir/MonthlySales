@@ -7,29 +7,22 @@
 from pathlib import Path
 import importlib
 from Code import z_cf as cf
+from Code import z_ns as ns
 
 
 CWD = Path.cwd()
+dirs = ns.Dirs()
 
-
-class Params:
-    def __init__(self,
-                 initial_jmonth_4balanced_subsample=139601,
-                 last_jmonth=None):
-        self.initial_jmoneh = initial_jmonth_4balanced_subsample
-        self.last_jmonth = last_jmonth
-        self.py_code_dir_n = 'Code'
-
-
-pa = Params()
-py_dir = CWD / pa.py_code_dir_n
+pa = ns.Params()
+pa.initial_jmonth = 139601
+pa.last_jmonth = None
 
 
 def main():
     pass
     ##
     dct = {}
-    ms2load = cf.load_modules_pths(py_dir)
+    ms2load = cf.load_modules_pths(dirs.Code)
     for mod in ms2load:
         dct[str(mod)] = importlib.import_module(mod, package=None)
     print(dct)

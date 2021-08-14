@@ -13,9 +13,10 @@ nest_asyncio.apply()  # Run this line in cell mode to code work
 
 dirs = ns.Dirs()
 rq = ns.ReqParams()
+vif = ns.VeryImportantFiles()
 
 ScN = 'b'
-PgsPn = dirs.raw / "pgs.txt"
+PgsPn = vif.pgs
 
 
 async def download_page_json(params):

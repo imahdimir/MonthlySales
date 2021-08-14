@@ -143,8 +143,7 @@ class PlotMonthly(MonthlyStats):
                       (cte.empty_xl_col, ms.norm_rev_d, cte.empty_xl_col,
                        ms.norm_rev_d),
                       (cte.empty_xl_col, ms.norm_rev_r, cte.empty_xl_col,
-                       ms.norm_rev_r),
-                      ]
+                       ms.norm_rev_r)]
         for ch in chart_data:
             self._plot_stack_bar(col_l0=ch[0],
                                  col_l1=ch[1],

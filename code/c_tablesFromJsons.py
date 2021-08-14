@@ -16,7 +16,7 @@ dirs = ns.Dirs()
 ct = ns.CodalTableColumns()
 cte = ns.Constants()
 
-cur_scrp_prq_pn = dirs.raw / f'{script_name}{cte.parquet_suf}'
+cur_scrp_prq_pn = dirs.raw / f'{script_name}.parquet'
 
 
 def extract_data_from_json(jspn):
@@ -49,7 +49,7 @@ def main():
         new = new.append(jsondf)
     print(new)
     ##
-    new.to_parquet(dirs.raw / f'NewData{cte.parquet_suf}', index=False)
+    new.to_parquet(dirs.raw / f'new_data.parquet', index=False)
     ##
     new[ct.PublishDateTime] = new[
         ct.PublishDateTime].apply(cf.convert_pubdatetime_to_int)

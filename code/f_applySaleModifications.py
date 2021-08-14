@@ -13,8 +13,8 @@ rd = ns.RawDataColumns()
 ft = ns.FirmTypes()
 cte = ns.Constants()
 
-cur_prq = dirs.raw / f"{script_name}{cte.parquet_suf}"
-pre_prq = dirs.raw / f"{lst_script}{cte.parquet_suf}"
+cur_prq = dirs.raw / f"{script_name}.parquet"
+pre_prq = dirs.raw / f"{lst_script}.parquet"
 
 
 def main():

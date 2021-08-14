@@ -238,7 +238,7 @@ def return_the_1file_pn_with_suffix(dirpn: Path, suffix):
 
 
 def load_dollar_cpi():
-    xl_pn = return_the_1file_pn_with_suffix(dirs.in_cpi_dollar_1xl, cte.xl_suf)
+    xl_pn = return_the_1file_pn_with_suffix(dirs.in_cpi_dollar_1xl, '.xlsx')
     dc = pd.read_excel(xl_pn, engine='openpyxl')
     dcc = ns.DollarCpiCols()
     fc = ns.FormalCols()
@@ -251,6 +251,34 @@ def load_dollar_cpi():
 
 def save_fig_as_fmt(fig, pn_suffless, fmt='eps'):
     fig.savefig(f'{pn_suffless}.{fmt}', format=fmt, dpi=1200)
+
+
+def add_to_tex_data(csv_name: str,
+                    data_val: pd.DataFrame or float or int or str,
+                    index_lbl=None,
+                    col_lbl=None, ):
+    """adds data to csv data"""
+    csvpn = Path(dirs.texdata).joinpath(csv_name).with_suffix('.csv')
+
+    if csvpn.exists():
+        df = pd.read_csv(csvpn)
+    else:
+        df = pd.DataFrame()
+
+    if type(data_val) == pd.DataFrame:
+        data_val = data_val.append(df)
+        data_val = data_val[~data_val.index.duplicated()]
+        df = data_val
+    else:
+        if csv_name == vif.vars and col_lbl is None:
+            df.at[index_lbl] = data_val
+        else:
+            df.at[index_lbl, col_lbl] = data_val
+
+    df = df.convert_dtypes()
+    df.to_csv(csvpn)
+    print(csvpn)
+    return df
 
 
 def main():

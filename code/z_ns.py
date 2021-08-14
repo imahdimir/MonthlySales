@@ -6,11 +6,17 @@ from varname import nameof as no
 CWD = Path.cwd()
 
 
+class Params:
+    def __init__(self,
+                 initial_jmonth_4balanced_subsample=139601,
+                 last_jmonth=None):
+        self.initial_jmonth = initial_jmonth_4balanced_subsample
+        self.last_jmonth = last_jmonth
+
+
 class Constants:
     def __init__(self):
-        self.parquet_suf = ".parquet"
-        self.html_suf = '.html'
-        self.xl_suf = '.xlsx'
+        self.code_dirname = "Code"
         self.fdist_n = "TSE Monthly Sale Data Project"
         self.firms = None
         self.base_year = None
@@ -25,23 +31,29 @@ class Dirs:
     def __init__(self):
         """ds."""
         cte = Constants()
-
-        self.Code = None
+        # in main dir
+        self.Code = cte.code_dirname
         self.fdist = None  # formal distribution of the project
         self.in_cpi_dollar_1xl = None
         self.figs = None
         self.out_data = None
 
-        for attr_key in self.__dict__:
-            self.__dict__[attr_key] = CWD / attr_key
+        for key, val in self.__dict__.items():
+            if val is None:
+                self.__dict__[key] = CWD / key
+            else:
+                self.__dict__[key] = CWD / val
 
+                # in /Code/
         self.jsons = None
         self.htmls = None
         self.raw = None
+        self.texdata = None
 
         for att_k in [no(self.jsons), no(self.htmls), no(self.raw)]:
             self.__dict__[att_k] = self.Code / att_k
 
+        # /fdist/
         self.FormalDist = self.fdist / cte.fdist_n
         self.data = None
         self.data = self.FormalDist / no(self.data)
@@ -55,13 +67,16 @@ class VeryImportantFiles:
     def __init__(self):
         dirs = Dirs()
 
+        self.pgs = None
+        self.pgs = dirs.raw / f"{no(self.pgs)}.txt"
+
         self.lastData = None
         self.lastData = dirs.raw / f'{no(self.lastData)}.txt'
-        #
 
         self.bs_name = None
         self.data_desc = None
-        #
+
+        self.vars = None
 
         for key, att in self.__dict__.items():
             if att is None:
