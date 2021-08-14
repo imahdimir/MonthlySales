@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="r_b" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
+  <configuration default="false" name="rb" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
     <module name="TSE Monthly Sale" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -12,7 +12,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ReportMaker/py/r_b_.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Code/rb_dataDesc.py" />
     <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />

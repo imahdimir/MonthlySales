@@ -1,61 +1,29 @@
 """docstring."""
 
-##
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from py import z_ns as ns
-from ReportMaker.py import r_z_cf as rcf
-from ReportMaker.py import r_z_ns as rns
-from py import z_cf as cf
+from Code import z_ns as ns
+from Code import z_cf as cf
+from Code.rc_monthlyStats import MonthlyStats
 
 
 idx = pd.IndexSlice
 
+dirs = ns.Dirs()
 fc = ns.FormalCols()
 ft = ns.FirmTypes()
-ms = rns.MonthlyStatCols()
-ds = rns.DataSetsNames()
-rdirs = rns.FormalReportDirectories()
+ms = ns.MonthlyStatCols()
+ds = ns.DataSetsNames()
+dcc = ns.DollarCpiCols()
+cte = ns.Constants()
 
 
-class MonthlyStats:
+class PlotMonthly(MonthlyStats):
     def __init__(self, df: pd.DataFrame, dataset_name):
-        """ds."""
-
-        self.dn = dataset_name
-        self.df = df
-
-        self.monthly_group_by = [fc.JMonth, fc.FirmType]
-        self.m_df = None
-
-        self.x_ax = None
+        super().__init__(df, dataset_name)
 
 
-    def build_monthly_data(self):
-        self.df = self.df.sort_values(fc.JMonth)
-        self.df[ms.rev_Hemmat] = self.df[fc.RevenueBT] / 10 ** 3
-        self.df = self.df.drop(columns=fc.RevenueBT)
-
-        mo_multi_ind = pd.MultiIndex.from_product([self.df[fc.JMonth].unique(),
-                                                   self.df[
-                                                       fc.FirmType].unique()],
-                                                  names=self.monthly_group_by)
-        self.m_df = pd.DataFrame(index=mo_multi_ind)
-        grouped = self.df.groupby(self.monthly_group_by)
-        dsc = grouped.describe().round(3)
-        self.m_df = self.m_df.join(dsc)
-
-        sdf = grouped.sum()
-        sdf.columns = [(ms.rev_Hemmat, 'sum')]
-        self.m_df = self.m_df.join(sdf)
-        m_df_cmi = pd.MultiIndex.from_tuples(self.m_df.columns.tolist())
-        self.m_df = self.m_df.reindex(m_df_cmi, axis=1)
-        cf.save_df_to_xl(self.m_df,
-                         rdirs.data / f"Monthly-{self.dn}",
-                         index=True,
-                         float_format="%.3f")
-
+    def _set_months_as_x_axis(self):
         self.x_ax = self.m_df.index.unique(0).tolist()
         self.x_ax = [str(k) for k in self.x_ax]
 
@@ -91,23 +59,24 @@ class MonthlyStats:
         fig_n = f"Sales Sum-{self.dn}"
         ax.set_title(fig_n)
         ax.grid(axis='y')
-        fig_pnsuffless = rdirs.figs / fig_n
-        save_fig_as_fmt(fig, fig_pnsuffless)
-        fig.show()
+        fig_pnsuffless = dirs.figs / fig_n
+        cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        # fig.show()
         return fig
 
 
-    def plot_sales_mean_monthly(self):
+    def _plot_stack_bar(self, col_l0, col_l1, y_lbl, title):
+        col0 = col_l0
+        col1 = col_l1
         x = self.x_ax
-        yl0 = self.m_df.loc[
-            idx[:, ft.Production], (ms.rev_Hemmat, 'mean')]
+
+        yl0 = self.m_df.loc[idx[:, ft.Production], (col0, col_l1)]
         yl0_lbl = ft.Production
-        yl1 = self.m_df.loc[
-            idx[:, ft.Service], (ms.rev_Hemmat, 'mean')]
+        yl1 = self.m_df.loc[idx[:, ft.Service], (col0, col_l1)]
         yl1_lbl = ft.Service
 
         width = 0.35
-        ax_y_lbl = ms.mean_rev_ht
+        ax_y_lbl = y_lbl
         ax_x_lbl = fc.JMonth
 
         fig, ax = plt.subplots(figsize=(28.8, 18))
@@ -120,11 +89,11 @@ class MonthlyStats:
 
         ax.set_xticklabels(x, rotation=30)
         ax.legend()
-        fig_n = f"Sales Mean-{self.dn}"
+        fig_n = f"{title}-{self.dn}"
         ax.set_title(fig_n)
         ax.grid(axis='y')
-        fig_pnsuffless = rdirs.figs / fig_n
-        save_fig_as_fmt(fig, fig_pnsuffless)
+        fig_pnsuffless = dirs.figs / fig_n
+        cf.save_fig_as_fmt(fig, fig_pnsuffless)
         return fig
 
 
@@ -154,29 +123,40 @@ class MonthlyStats:
         fig_n = f"Firms Count-{self.dn}"
         ax.set_title(fig_n)
         ax.grid(axis='y')
-        fig_pnsuffless = rdirs.figs / fig_n
-        save_fig_as_fmt(fig, fig_pnsuffless)
+        fig_pnsuffless = dirs.figs / fig_n
+        cf.save_fig_as_fmt(fig, fig_pnsuffless)
         return fig
 
 
-    def plot_all(self):
+    def build_all_plots(self):
         self.build_monthly_data()
+        self._set_months_as_x_axis()
+
+        self.plot_firms_count()
         self.plot_sales_sum_monthly()
-        self.plot_sales_mean_monthly()
-        if self.dn == ds.whole_sample:
-            self.plot_firms_count()
-        else:
 
-
-def save_fig_as_fmt(fig, pn_suffless, fmt='eps'):
-    fig.savefig(f'{pn_suffless}.{fmt}', format=fmt, dpi=1200)
+        chart_data = [(ms.rev_Hemmat, 'mean', ms.rev_Hemmat, "Mean Sales"),
+                      (ms.rev_d, 'sum', ms.rev_d, ms.rev_d),
+                      (ms.rev_r, 'sum', ms.rev_r, ms.rev_r),
+                      (cte.empty_xl_col, ms.norm_rev, cte.empty_xl_col,
+                       ms.norm_rev),
+                      (cte.empty_xl_col, ms.norm_rev_d, cte.empty_xl_col,
+                       ms.norm_rev_d),
+                      (cte.empty_xl_col, ms.norm_rev_r, cte.empty_xl_col,
+                       ms.norm_rev_r),
+                      ]
+        for ch in chart_data:
+            self._plot_stack_bar(col_l0=ch[0],
+                                 col_l1=ch[1],
+                                 y_lbl=ch[2],
+                                 title=ch[3])
 
 
 def main():
     pass
     ##
-    ws = rcf.load_whole_sample()
-    bs = rcf.load_balanced_subsample()
+    ws = cf.load_whole_sample()
+    bs = cf.load_balanced_subsample()
 
     ws_lbl = ds.whole_sample
     bs_lbl = ds.balanced_subsample
@@ -184,10 +164,8 @@ def main():
     data_dct = {ws_lbl: ws,
                 bs_lbl: bs}
     for ke, va in data_dct.items():
-        dgo = MonthlyStats(va, ke)
-        dgo.plot_all()
-
-    ##
+        ms_o = PlotMonthly(va, ke)
+        ms_o.build_all_plots()
 
 
 ##
@@ -195,4 +173,3 @@ if __name__ == '__main__':
     pass
 else:
     pass
-    ##

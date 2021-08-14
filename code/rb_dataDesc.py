@@ -92,11 +92,11 @@ class DataDsc:
 
 def make_the_balanced_subsample_save():
     whs = cf.load_whole_sample()
-    whs = whs[whs[fc.JMonth].ge(pa.start_jmonth)]
-    if pa.end_jmonth is not None:
-        whs = whs[whs[fc.JMonth].le(pa.end_jmonth)]
+    whs = whs[whs[fc.JMonth].ge(pa.initial_jmoneh)]
+    if pa.last_jmonth is not None:
+        whs = whs[whs[fc.JMonth].le(pa.last_jmonth)]
     bsu = cf.make_balanced_subsample(whs, fc.JMonth, fc.Ticker)
-    init_jm = pa.init
+    init_jm = pa.initial_jmoneh
     lst_jm = whs[fc.JMonth].max()
     bs_lbl = ds.balanced_subsample
     bsu_pn = dirs.out_data / f'{bs_lbl}-{init_jm}-{lst_jm}.xlsx'
@@ -116,29 +116,26 @@ def main():
     bs = make_the_balanced_subsample_save()
     ws_lbl = ds.whole_sample
     bs_lbl = ds.balanced_subsample
-    ##
-    df_dsc = pd.DataFrame()
 
+    df_dsc = pd.DataFrame()
     dsc_index = (ws_lbl, bs_lbl)
     data_dct = {ws_lbl: ws,
                 bs_lbl: bs}
-
     for smpl in dsc_index:
         ddo = DataDsc(df=data_dct[smpl], the_index_lbl=smpl)
         od = ddo.ret_odf()
         df_dsc = df_dsc.append(od)
-
     df_dsc = df_dsc.convert_dtypes()
     cf.save_df_to_xl(df_dsc,
-                     dirs.data / f'{vif.data_desc}',
+                     dirs.out_data / f'{vif.data_desc}',
                      index=True,
                      float_format="%.3f")
-
     ##
     for smpl in dsc_index:
         ddo = DataDsc(df=data_dct[smpl], the_index_lbl=smpl)
         ou = ddo.ret_tickers_list()
-        cf.save_df_to_xl(ou, dirs.data / f'{smpl}-{cte.firms}.xlsx')
+        cf.save_df_to_xl(ou, dirs.out_data / f'{smpl}-{cte.firms}.xlsx')
+    ##
 
 
 ##

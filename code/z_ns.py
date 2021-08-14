@@ -13,6 +13,8 @@ class Constants:
         self.xl_suf = '.xlsx'
         self.fdist_n = "TSE Monthly Sale Data Project"
         self.firms = None
+        self.base_year = None
+        self.empty_xl_col = ""
 
         for key, att in self.__dict__.items():
             if att is None:
@@ -22,10 +24,9 @@ class Constants:
 class Dirs:
     def __init__(self):
         """ds."""
-
         cte = Constants()
 
-        self.py = None
+        self.Code = None
         self.fdist = None  # formal distribution of the project
         self.in_cpi_dollar_1xl = None
         self.figs = None
@@ -33,26 +34,17 @@ class Dirs:
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = CWD / attr_key
-            # if not self.__dict__[attr_key].exists():
-            #     self.__dict__[attr_key].mkdir()
-        #
 
         self.jsons = None
         self.htmls = None
         self.raw = None
 
         for att_k in [no(self.jsons), no(self.htmls), no(self.raw)]:
-            self.__dict__[att_k] = self.py / att_k
-        #
+            self.__dict__[att_k] = self.Code / att_k
 
         self.FormalDist = self.fdist / cte.fdist_n
-
-        self.code = None
         self.data = None
-
-        for att_k in [no(self.code), no(self.data)]:
-            self.__dict__[att_k] = self.FormalDist / att_k
-        #
+        self.data = self.FormalDist / no(self.data)
 
         for attr_key in self.__dict__:
             if not self.__dict__[attr_key].exists():
@@ -229,14 +221,6 @@ class FormalCols(OutputColumns):
         self.RevenueBT = 'Revenue(BT)'
 
 
-class MandatoryDirsFiles:
-    def __init__(self):
-        pdirs = Dirs()
-        self.raw = pdirs.raw
-        self.py = pdirs.py
-        print(self.__dict__)
-
-
 class DataSetsNames:
     def __init__(self):
         self.whole_sample = None
@@ -263,8 +247,14 @@ class DataDescriptionCols:
 
 class MonthlyStatCols:
     def __init__(self):
-        self.rev_Hemmat = "Revenue(Hemmat)"
-        self.mean_rev_ht = "Mean Revenue(Hemmat)"
+        self.rev_Hemmat = "Revenue(Hemat)"
+        self.mean_rev_ht = "Mean Revenue(Hemat)"
+        self.normed_cpi = "Normalized CPI"
+        self.rev_r = "Real Revenue(Hemat)"
+        self.rev_d = "Revenue(B$)"
+        self.norm_rev = "Normalized Revenue"
+        self.norm_rev_r = "Normalized Real Revenue"
+        self.norm_rev_d = "Normalized Dollar Revenue"
 
 
 ##
@@ -273,6 +263,5 @@ if __name__ == '__main__':
 else:
     pass
     ##
-    mdd = MandatoryDirsFiles()
 
 ##

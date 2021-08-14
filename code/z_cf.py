@@ -224,7 +224,7 @@ def load_whole_sample():
 
 def load_balanced_subsample():
     """ds."""
-    bs_n_pn = dirs.data / f'{vif.bs_name}.txt'
+    bs_n_pn = dirs.raw / f'{vif.bs_name}.txt'
     with open(bs_n_pn, 'r') as f:
         bs_pn = f.read()
     return pd.read_excel(bs_pn, engine='openpyxl')
@@ -242,8 +242,15 @@ def load_dollar_cpi():
     dc = pd.read_excel(xl_pn, engine='openpyxl')
     dcc = ns.DollarCpiCols()
     fc = ns.FormalCols()
+    dc = dc.iloc[:, :3]
     dc.columns = [fc.JMonth, dcc.Dollar, dcc.CPI]
+    dc = dc.convert_dtypes()
+    dc = dc.set_index(fc.JMonth)
     return dc
+
+
+def save_fig_as_fmt(fig, pn_suffless, fmt='eps'):
+    fig.savefig(f'{pn_suffless}.{fmt}', format=fmt, dpi=1200)
 
 
 def main():
