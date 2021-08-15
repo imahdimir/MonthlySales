@@ -66,7 +66,7 @@ class Dirs:
         # /fdist/
         self.FormalDist = self.fdist / cte.fdist_n_man
         self.Fdata = self.FormalDist / 'data'
-        self.FCode = self.FormalDist / 'code'
+        self.FCode = self.FormalDist / no(self.Code)
         self.Ffigs = self.FormalDist / 'figs'
 
         # /docs/

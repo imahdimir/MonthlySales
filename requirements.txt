@@ -1,0 +1,12 @@
+requests~=2.25.1
+pandas~=1.1.2
+openpyxl~=3.0.7
+persiantools~=2.1.1
+Unidecode~=1.2.0
+lxml~=4.6.3
+varname~=0.7.1
+asyncio~=3.4.3
+aiohttp~=3.7.4.post0
+matplotlib~=3.3.4
+numpy~=1.19.5
+scipy~=1.5.4

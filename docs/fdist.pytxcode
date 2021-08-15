@@ -1,0 +1,92 @@
+=>PYTHONTEX#py#default#default#0#code#####28#
+import pandas as pd
+from pathlib import PurePath
+import os
+import sys
+main_dir = os.path.dirname(os.getcwd())
+sys.path.append(main_dir)
+os.chdir(main_dir)
+
+from TSEMonthlySale import ns
+
+
+cte = ns.Constants()
+td = ns.TexDataFilenames()
+dirs = ns.Dirs()
+
+
+texDtDir = dirs.texdata
+varfn = td.vars
+varpn = texDtDir / f"{varfn}.csv"
+fi = PurePath(varpn)
+
+# vars = pd.read_csv(varpn, index_col = 0, )
+
+bslbl = cte.Balanced
+wslbl = cte.Whole
+
+=>PYTHONTEX#py#default#default#1#code#####87#
+sumstat_fn = td.sumStat
+ss = ns.SumStatCols()
+stat = pd.read_csv(fi.with_stem(sumstat_fn), index_col=0)
+=>PYTHONTEX#py#default#default#2#i#####94#
+stat.loc[bslbl, ss.initJMonth]
+=>PYTHONTEX#py#default#default#3#i#####105#
+stat.loc[bslbl, ss.initJMonth]
+=>PYTHONTEX#py#default#default#4#i#####107#
+stat.loc[wslbl, ss.obs]
+=>PYTHONTEX#py#default#default#5#i#####107#
+stat.loc[bslbl, ss.obs]
+=>PYTHONTEX#py#default#default#6#i#####108#
+stat.loc[wslbl, ss.initJMonth]
+=>PYTHONTEX#py#default#default#7#i#####108#
+stat.loc[bslbl, ss.initJMonth]
+=>PYTHONTEX#py#default#default#8#i#####109#
+stat.loc[wslbl, ss.lastJMonth]
+=>PYTHONTEX#py#default#default#9#i#####109#
+stat.loc[bslbl, ss.lastJMonth]
+=>PYTHONTEX#py#default#default#10#i#####110#
+stat.loc[wslbl, ss.monthsNo]
+=>PYTHONTEX#py#default#default#11#i#####110#
+stat.loc[bslbl, ss.monthsNo]
+=>PYTHONTEX#py#default#default#12#i#####111#
+round(stat.loc[wslbl,ss.avgObsMonthly],1)
+=>PYTHONTEX#py#default#default#13#i#####111#
+round(stat.loc[bslbl,ss.avgObsMonthly])
+=>PYTHONTEX#py#default#default#14#i#####112#
+stat.loc[wslbl, ss.firmsNo]
+=>PYTHONTEX#py#default#default#15#i#####112#
+stat.loc[bslbl, ss.firmsNo]
+=>PYTHONTEX#py#default#default#16#i#####113#
+stat.loc[wslbl, ss.productionNo]
+=>PYTHONTEX#py#default#default#17#i#####113#
+stat.loc[bslbl, ss.productionNo]
+=>PYTHONTEX#py#default#default#18#i#####114#
+round(stat.loc[wslbl,ss.productionPct]*100,1)
+=>PYTHONTEX#py#default#default#19#i#####114#
+round(stat.loc[bslbl,ss.productionPct]*100,1)
+=>PYTHONTEX:SETTINGS#
+version=0.18
+outputdir=pythontex-files-fdist
+workingdir=.
+workingdirset=false
+gobble=none
+rerun=default
+hashdependencies=default
+makestderr=false
+stderrfilename=full
+keeptemps=none
+pyfuture=default
+pyconfuture=none
+pygments=true
+pygglobal=:GLOBAL||
+fvextfile=-1
+pyconbanner=none
+pyconfilename=stdin
+depythontex=false
+pygfamily=py|python3|
+pygfamily=pycon|pycon|
+pygfamily=sympy|python3|
+pygfamily=sympycon|pycon|
+pygfamily=pylab|python3|
+pygfamily=pylabcon|pycon|
