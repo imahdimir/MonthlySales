@@ -5,63 +5,53 @@ from varname import nameof as no
 
 CWD = Path.cwd()
 
-
-class Params:
+class BalancedSubsampleConfig:
     def __init__(self,
                  initial_jmonth_4balanced_subsample=139601,
                  last_jmonth=None):
-        self.initial_jmonth = initial_jmonth_4balanced_subsample
-        self.last_jmonth = last_jmonth
-
+        self.initJMonth = initial_jmonth_4balanced_subsample
+        self.lastJMonth = last_jmonth
 
 class Constants:
     def __init__(self):
-        self.code_dirname = "Code"
-        self.fdist_n = "TSE Monthly Sale Data Project"
+        self.fdist_n_man = "TSE Monthly Sale Data Project"
+        self.Whole = None
+        self.Balanced = None
         self.firms = None
-        self.base_year = None
-        self.empty_xl_col = ""
-
         for key, att in self.__dict__.items():
             if att is None:
                 self.__dict__[key] = key
-
 
 class Dirs:
     def __init__(self):
         """ds."""
         cte = Constants()
         # in main dir
-        self.Code = cte.code_dirname
+        self.Code = None
         self.fdist = None  # formal distribution of the project
         self.in_cpi_dollar_1xl = None
         self.figs = None
         self.out_data = None
-
+        self.report = None
         for key, val in self.__dict__.items():
             if val is None:
                 self.__dict__[key] = CWD / key
             else:
                 self.__dict__[key] = CWD / val
-
-                # in /Code/
+        # /report/
+        self.texdata = None
+        self.texdata = self.report / no(self.texdata)
+        # /Code/
         self.jsons = None
         self.htmls = None
         self.raw = None
-        self.texdata = None
-
         for att_k in [no(self.jsons), no(self.htmls), no(self.raw)]:
             self.__dict__[att_k] = self.Code / att_k
-
         # /fdist/
-        self.FormalDist = self.fdist / cte.fdist_n
-        self.data = None
-        self.data = self.FormalDist / no(self.data)
-
+        self.FormalDist = self.fdist / cte.fdist_n_man
         for attr_key in self.__dict__:
             if not self.__dict__[attr_key].exists():
                 self.__dict__[attr_key].mkdir()
-
 
 class VeryImportantFiles:
     def __init__(self):
@@ -74,14 +64,35 @@ class VeryImportantFiles:
         self.lastData = dirs.raw / f'{no(self.lastData)}.txt'
 
         self.bs_name = None
-        self.data_desc = None
-
-        self.vars = None
+        self.DatasetsSummaryStats = None
 
         for key, att in self.__dict__.items():
             if att is None:
                 self.__dict__[key] = key
 
+class TexDataFilenames:
+    def __init__(self):
+        self.vars = None  # single variables in text
+        self.sumStat = None
+
+        for key, att in self.__dict__.items():
+            if att is None:
+                self.__dict__[key] = key
+
+class SumStatCols:
+    def __init__(self):
+        self.obs = None
+        self.initJMonth = None
+        self.lastJMonth = None
+        self.monthsNo = None
+        self.avgObsMonthly = None
+        self.firmsNo = None
+        self.productionNo = None
+        self.productionPct = None
+
+        for key, att in self.__dict__.items():
+            if att is None:
+                self.__dict__[key] = key
 
 class DollarCpiCols:
     def __init__(self):
@@ -93,7 +104,6 @@ class DollarCpiCols:
         for key, att in self.__dict__.items():
             if att is None:
                 self.__dict__[key] = key
-
 
 class ReqParams:
     def __init__(self):
@@ -118,7 +128,6 @@ class ReqParams:
                 "search"           : "false", }
         self.CodalBaseUrl = "https://codal.ir"
         self.LetterCodeForMonthlySaleReorts = "ن-۳۰"
-
 
 class CodalTableColumns:
     def __init__(self):
@@ -151,7 +160,6 @@ class CodalTableColumns:
 
         self.cols_list = colslist
 
-
 class RawDataColumns(CodalTableColumns):
     def __init__(self):
         super().__init__()
@@ -179,7 +187,6 @@ class RawDataColumns(CodalTableColumns):
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = attr_key
 
-
 class FirmTypes:
     def __init__(self):
         self.Production = None
@@ -197,7 +204,6 @@ class FirmTypes:
         self.firmTypesList = firmtypes_helper
         self.unknown = 'unknown'
 
-
 class ErrorMessages:
     def __init__(self):
         self.dateConflict = None
@@ -208,7 +214,6 @@ class ErrorMessages:
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = attr_key
-
 
 class OutputColumns(RawDataColumns):
     def __init__(self):
@@ -225,7 +230,6 @@ class OutputColumns(RawDataColumns):
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = attr_key
 
-
 class FormalCols(OutputColumns):
     def __init__(self):
         super().__init__()
@@ -234,31 +238,6 @@ class FormalCols(OutputColumns):
         self.JMonth = 'JMonth'
         self.Ticker = 'Ticker'
         self.RevenueBT = 'Revenue(BT)'
-
-
-class DataSetsNames:
-    def __init__(self):
-        self.whole_sample = None
-        self.balanced_subsample = None
-
-        for attr_key in self.__dict__:
-            self.__dict__[attr_key] = attr_key
-
-
-class DataDescriptionCols:
-    def __init__(self):
-        self.initial_jmonth = None
-        self.final_jmonth = None
-        self.obs = None
-        self.month_count = None
-        self.firms_count = None
-        self.production_firms_count = None
-        self.production_firms_pct = None
-        self.avg_obs_monthly = None
-
-        for attr_key in self.__dict__:
-            self.__dict__[attr_key] = attr_key
-
 
 class MonthlyStatCols:
     def __init__(self):
@@ -270,7 +249,6 @@ class MonthlyStatCols:
         self.norm_rev = "Normalized Revenue"
         self.norm_rev_r = "Normalized Real Revenue"
         self.norm_rev_d = "Normalized Dollar Revenue"
-
 
 ##
 if __name__ == '__main__':

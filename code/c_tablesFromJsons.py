@@ -5,8 +5,8 @@ import os
 
 import pandas as pd
 
-import z_ns as ns
-import z_cf as cf
+from Code import z_ns as ns
+from Code import z_cf as cf
 
 
 lst_script_name = 'b'

@@ -13,22 +13,18 @@ dirs = ns.Dirs()
 fc = ns.FormalCols()
 ft = ns.FirmTypes()
 ms = ns.MonthlyStatCols()
-ds = ns.DataSetsNames()
 dcc = ns.DollarCpiCols()
 cte = ns.Constants()
-
 
 class PlotMonthly(MonthlyStats):
     def __init__(self, df: pd.DataFrame, dataset_name):
         super().__init__(df, dataset_name)
 
-
     def _set_months_as_x_axis(self):
         self.x_ax = self.m_df.index.unique(0).tolist()
         self.x_ax = [str(k) for k in self.x_ax]
 
-
-    def plot_sales_sum_monthly(self):
+    def _plot_sales_sum_monthly(self):
         """"""
         x = self.x_ax
         yl0 = self.m_df.loc[
@@ -56,23 +52,24 @@ class PlotMonthly(MonthlyStats):
 
         ax.set_xticklabels(x, rotation=30)
         ax.legend()
-        fig_n = f"Sales Sum-{self.dn}"
-        ax.set_title(fig_n)
+        fig_title = f"Sales Sum-{self.dn}"
+        ax.set_title(fig_title)
         ax.grid(axis='y')
-        fig_pnsuffless = dirs.figs / fig_n
-        cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        f_n = f'sales-{self.dn}'
+        fig_pnsuffless = dirs.figs / f_n
+        # cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        cf.save_fig_as_fmt(fig, fig_pnsuffless, fmt='png')
         # fig.show()
         return fig
-
 
     def _plot_stack_bar(self, col_l0, col_l1, y_lbl, title):
         col0 = col_l0
         col1 = col_l1
         x = self.x_ax
 
-        yl0 = self.m_df.loc[idx[:, ft.Production], (col0, col_l1)]
+        yl0 = self.m_df.loc[idx[:, ft.Production], (col0, col1)]
         yl0_lbl = ft.Production
-        yl1 = self.m_df.loc[idx[:, ft.Service], (col0, col_l1)]
+        yl1 = self.m_df.loc[idx[:, ft.Service], (col0, col1)]
         yl1_lbl = ft.Service
 
         width = 0.35
@@ -93,11 +90,11 @@ class PlotMonthly(MonthlyStats):
         ax.set_title(fig_n)
         ax.grid(axis='y')
         fig_pnsuffless = dirs.figs / fig_n
-        cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        # cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        cf.save_fig_as_fmt(fig, fig_pnsuffless, fmt='png')
         return fig
 
-
-    def plot_firms_count(self):
+    def _plot_firms_count(self):
         x = self.x_ax
         yl0 = self.m_df.loc[
             idx[:, ft.Production], (ms.rev_Hemmat, 'count')]
@@ -120,36 +117,32 @@ class PlotMonthly(MonthlyStats):
 
         ax.set_xticklabels(x, rotation=30)
         ax.legend()
-        fig_n = f"Firms Count-{self.dn}"
+        fig_n = f"FirmsCount-{self.dn}"
         ax.set_title(fig_n)
         ax.grid(axis='y')
         fig_pnsuffless = dirs.figs / fig_n
         cf.save_fig_as_fmt(fig, fig_pnsuffless)
+        cf.save_fig_as_fmt(fig, fig_pnsuffless, fmt='png')
         return fig
-
 
     def build_all_plots(self):
         self.build_monthly_data()
         self._set_months_as_x_axis()
 
-        self.plot_firms_count()
-        self.plot_sales_sum_monthly()
+        self._plot_firms_count()
+        self._plot_sales_sum_monthly()
 
-        chart_data = [(ms.rev_Hemmat, 'mean', ms.rev_Hemmat, "Mean Sales"),
+        chart_data = [(ms.rev_Hemmat, 'mean', ms.rev_Hemmat, "MeanSales"),
                       (ms.rev_d, 'sum', ms.rev_d, ms.rev_d),
                       (ms.rev_r, 'sum', ms.rev_r, ms.rev_r),
-                      (cte.empty_xl_col, ms.norm_rev, cte.empty_xl_col,
-                       ms.norm_rev),
-                      (cte.empty_xl_col, ms.norm_rev_d, cte.empty_xl_col,
-                       ms.norm_rev_d),
-                      (cte.empty_xl_col, ms.norm_rev_r, cte.empty_xl_col,
-                       ms.norm_rev_r)]
+                      ("", ms.norm_rev, "", ms.norm_rev),
+                      ("", ms.norm_rev_d, "", ms.norm_rev_d),
+                      ("", ms.norm_rev_r, "", ms.norm_rev_r)]
         for ch in chart_data:
             self._plot_stack_bar(col_l0=ch[0],
                                  col_l1=ch[1],
                                  y_lbl=ch[2],
                                  title=ch[3])
-
 
 def main():
     pass
@@ -157,18 +150,18 @@ def main():
     ws = cf.load_whole_sample()
     bs = cf.load_balanced_subsample()
 
-    ws_lbl = ds.whole_sample
-    bs_lbl = ds.balanced_subsample
+    data = {cte.Whole   : ws,
+            cte.Balanced: bs}
 
-    data_dct = {ws_lbl: ws,
-                bs_lbl: bs}
-    for ke, va in data_dct.items():
+    for ke, va in data.items():
         ms_o = PlotMonthly(va, ke)
         ms_o.build_all_plots()
 
-
 ##
 if __name__ == '__main__':
+    main()
+    print(f'{__file__} Done.')
     pass
 else:
     pass
+    ##

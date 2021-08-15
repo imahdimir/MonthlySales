@@ -21,19 +21,18 @@ parser = etree.HTMLParser()
 dirs = ns.Dirs()
 vif = ns.VeryImportantFiles()
 cte = ns.Constants()
+td = ns.TexDataFilenames()
 
-
-def load_modules_pths(py_dir_n: Path = Path()):
-    pydir = Path().joinpath(py_dir_n)
-    pns = list(pydir.glob('*.py'))
-    pns = [PurePath(x.stem).stem for x in pns]
-    main_module = [x for x in pns if x.split('_')[0] == 'a'][0]
-    pns = [x for x in pns if x != main_module]
-    pns.sort(key=str)
-    pns = [str(x).split('.py')[0] for x in pns]
-    pns = [str(x).replace('/', '.') for x in pns]
-    return pns
-
+def load_pns_of_all_modules_in_the_same_dir_except(py_module_pn: Path):
+    """ """
+    pydir = PurePath(py_module_pn).parent
+    pys = list(Path(pydir).glob('*.py'))
+    pys = [x.relative_to(pydir.parent) for x in pys if
+           PurePath(x) != PurePath(py_module_pn)]
+    pys.sort(key=str)
+    pys = [str(x).split('.py')[0] for x in pys]
+    pys = [str(x).replace('/', '.') for x in pys]
+    return pys
 
 def is_machine_connected_to_internet(host="https://google.com"):
     try:
@@ -44,7 +43,6 @@ def is_machine_connected_to_internet(host="https://google.com"):
         print("No internet!")
         return False
 
-
 def find_jdate(inp):
     inp = str(inp)
     inp = inp[inp.find("/") - 4: inp.find("/") + 6]
@@ -53,7 +51,6 @@ def find_jdate(inp):
     if re.match(r"\d{8}", date1):
         return int(date1)
     return -1
-
 
 def return_clusters_indices(iterable_obj, clustersize=100):
     intdiv = len(iterable_obj) // clustersize
@@ -69,7 +66,6 @@ def return_clusters_indices(iterable_obj, clustersize=100):
     print(clusters_indices)
     return clusters_indices
 
-
 def convert_pubdatetime_to_int(pubdate):
     pubdate = pubdate.replace("/", "")
     pubdate = pubdate.replace(":", "")
@@ -79,7 +75,6 @@ def convert_pubdatetime_to_int(pubdate):
         return int(pubdate)
     else:
         return -1
-
 
 def wos(inp):
     inp1 = str(inp)
@@ -96,13 +91,11 @@ def wos(inp):
 
     return inp1
 
-
 def make_output_dict(outputskeys, default_value=None):
     outputs_dict = {}
     for el in outputskeys:
         outputs_dict[el] = default_value
     return outputs_dict
-
 
 # Removes hidden rows and cols from html code to pandas can read it correctly
 def fix_html(html):
@@ -116,7 +109,6 @@ def fix_html(html):
     fixedhtml = etree.tostring(tree1, method="html", encoding="unicode")
     return fixedhtml
 
-
 def find_n_month_before(current_month, howmany=1):
     if howmany == 1:
         if current_month % 100 == 1:
@@ -129,7 +121,6 @@ def find_n_month_before(current_month, howmany=1):
     return find_n_month_before(find_n_month_before(current_month, 1),
                                howmany - 1)
 
-
 def any_of_list_isin(srchlist: list, inp):
     inp = str(inp)
     for el1 in srchlist:
@@ -137,10 +128,8 @@ def any_of_list_isin(srchlist: list, inp):
             return True
     return False
 
-
 def find_all_locs_eq_val(dfobj: pd.DataFrame, value):
-    return dfobj[dfobj.eq(value)].stack().index_lbl.values.tolist()
-
+    return dfobj[dfobj.eq(value)].stack().indexLbl.values.tolist()
 
 def read_accvalue_from_str(string):
     string1 = str(string)
@@ -152,13 +141,11 @@ def read_accvalue_from_str(string):
     else:
         return float(string1)
 
-
 def update_with_last_data(indf, lastprqpn):
     if lastprqpn.exists():
         lastdf = pd.read_parquet(lastprqpn)
         indf.update(lastdf)
     return indf
-
 
 def save_df_to_xl(df: pd.DataFrame,
                   pn_suff_less: pathlib.Path,
@@ -186,7 +173,6 @@ def save_df_to_xl(df: pd.DataFrame,
     wb.save(pn_suff_less.resolve().with_suffix(".xlsx"))
     wb.close()
 
-
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
         s = os.path.join(src, item)
@@ -195,7 +181,6 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copytree(s, d, symlinks, ignore)
         else:
             shutil.copy2(s, d)
-
 
 def make_balanced_subsample(df: pd.DataFrame,
                             col2balance_across: str,
@@ -211,7 +196,6 @@ def make_balanced_subsample(df: pd.DataFrame,
     bs = df[df[y].isin(common_y)]
     return bs
 
-
 def load_whole_sample():
     """return latest whole sample"""
     with open(vif.lastData, 'r') as f:
@@ -221,7 +205,6 @@ def load_whole_sample():
     df = pd.read_excel(xl_pn, engine='openpyxl')
     return df
 
-
 def load_balanced_subsample():
     """ds."""
     bs_n_pn = dirs.raw / f'{vif.bs_name}.txt'
@@ -229,13 +212,11 @@ def load_balanced_subsample():
         bs_pn = f.read()
     return pd.read_excel(bs_pn, engine='openpyxl')
 
-
 def return_the_1file_pn_with_suffix(dirpn: Path, suffix):
     pns = list(dirpn.glob(f'*{suffix}'))
     pns = [x for x in pns if not "~" in x.stem]
     the_pn = pns[0]
     return the_pn
-
 
 def load_dollar_cpi():
     xl_pn = return_the_1file_pn_with_suffix(dirs.in_cpi_dollar_1xl, '.xlsx')
@@ -248,20 +229,21 @@ def load_dollar_cpi():
     dc = dc.set_index(fc.JMonth)
     return dc
 
-
 def save_fig_as_fmt(fig, pn_suffless, fmt='eps'):
-    fig.savefig(f'{pn_suffless}.{fmt}', format=fmt, dpi=1200)
+    dpi = 200 if fmt != 'eps' else 1200
+    fig.savefig(f'{pn_suffless}.{fmt}', format=fmt, dpi=dpi)
+    print(f'{pn_suffless}.{fmt}')
 
-
-def add_to_tex_data(csv_name: str,
-                    data_val: pd.DataFrame or float or int or str,
-                    index_lbl=None,
-                    col_lbl=None, ):
+def add_to_texdata(csv_name: str,
+                   data_val: pd.DataFrame or float or int or str,
+                   index_lbl=None,
+                   col_lbl=None,
+                   overwrite: bool = True):
     """adds data to csv data"""
     csvpn = Path(dirs.texdata).joinpath(csv_name).with_suffix('.csv')
 
-    if csvpn.exists():
-        df = pd.read_csv(csvpn)
+    if csvpn.exists() and not overwrite:
+        df = pd.read_csv(csvpn, index_col=0)
     else:
         df = pd.DataFrame()
 
@@ -270,20 +252,19 @@ def add_to_tex_data(csv_name: str,
         data_val = data_val[~data_val.index.duplicated()]
         df = data_val
     else:
-        if csv_name == vif.vars and col_lbl is None:
-            df.at[index_lbl] = data_val
+        if csv_name == td.vars and col_lbl is None:
+            df.at[index_lbl, 'v'] = data_val
         else:
             df.at[index_lbl, col_lbl] = data_val
 
+    df.index.name = 'index'
     df = df.convert_dtypes()
     df.to_csv(csvpn)
     print(csvpn)
     return df
 
-
 def main():
     pass
-
 
 ##
 if __name__ == '__main__':

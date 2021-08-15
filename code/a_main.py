@@ -4,32 +4,35 @@
     set the Code folder PARENT dir as Current Working Direcoty(cwd) to code can be run
     """
 ##
-from pathlib import Path
 import importlib
 from Code import z_cf as cf
 from Code import z_ns as ns
 
 
-CWD = Path.cwd()
 dirs = ns.Dirs()
+pa = ns.BalancedSubsampleConfig()
+vif = ns.VeryImportantFiles()
 
-pa = ns.Params()
-pa.initial_jmonth = 139601
-pa.last_jmonth = None
+pa.initJMonth = 139601
+pa.lastJMonth = None
 
+self_n = 'a_main'
+self_pn = dirs.Code / f'{self_n}.py'
+
+print(self_pn)
+pys = cf.load_pns_of_all_modules_in_the_same_dir_except(self_pn)
+print(pys)
 
 def main():
     pass
     ##
     dct = {}
-    ms2load = cf.load_modules_pths(dirs.Code)
-    for mod in ms2load:
+    for mod in pys:
         dct[str(mod)] = importlib.import_module(mod, package=None)
     print(dct)
     ##
     for v in dct.values():
         v.main()
-
 
 ##
 if __name__ == "__main__":

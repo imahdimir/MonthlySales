@@ -468,7 +468,7 @@ def main():
         end_i = clusters[i + 1]
         print(f"{start_i} to {end_i}")
 
-        corr_is = flt.iloc[start_i:end_i].index_lbl
+        corr_is = flt.iloc[start_i:end_i].indexLbl
 
         tracnos = df.loc[corr_is, rd.TracingNo].astype(str)
         jdates = df.loc[corr_is, rd.jDate].astype(int)
